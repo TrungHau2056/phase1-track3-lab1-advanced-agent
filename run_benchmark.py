@@ -6,6 +6,9 @@ from rich import print
 from src.reflexion_lab.agents import ReActAgent, ReflexionAgent
 from src.reflexion_lab.reporting import build_report, save_report
 from src.reflexion_lab.utils import load_dataset, save_jsonl
+from dotenv import load_dotenv
+load_dotenv()
+
 app = typer.Typer(add_completion=False)
 
 @app.command()

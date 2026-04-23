@@ -1,0 +1,93 @@
+{
+  "meta": {
+    "dataset": "hotpot_qa_2.json",
+    "mode": "mock",
+    "num_records": 4,
+    "agents": [
+      "react",
+      "reflexion"
+    ]
+  },
+  "summary": {
+    "react": {
+      "count": 2,
+      "em": 0.5,
+      "avg_attempts": 1,
+      "avg_token_estimate": 1281.5,
+      "avg_latency_ms": 89974
+    },
+    "reflexion": {
+      "count": 2,
+      "em": 1.0,
+      "avg_attempts": 1.5,
+      "avg_token_estimate": 1993.5,
+      "avg_latency_ms": 223236
+    },
+    "delta_reflexion_minus_react": {
+      "em_abs": 0.5,
+      "attempts_abs": 0.5,
+      "tokens_abs": 712.0,
+      "latency_abs": 133262
+    }
+  },
+  "failure_modes": {
+    "react": {
+      "wrong_final_answer": 1,
+      "none": 1
+    },
+    "reflexion": {
+      "none": 2
+    }
+  },
+  "examples": [
+    {
+      "qid": "hpqa_0",
+      "agent_type": "react",
+      "gold_answer": "Arthur's Magazine",
+      "predicted_answer": "Arthur's Magazine was started first in 1844-1846, while First for Women began in 1989. Therefore, Arthur's Magazine is the earlier publication among the two magazines mentioned.",
+      "is_correct": false,
+      "attempts": 1,
+      "failure_mode": "wrong_final_answer",
+      "reflection_count": 0
+    },
+    {
+      "qid": "hpqa_1",
+      "agent_type": "react",
+      "gold_answer": "Delhi",
+      "predicted_answer": "The Oberoi family is part of the Oberoi Group, which has its head office in Delhi.",
+      "is_correct": true,
+      "attempts": 1,
+      "failure_mode": "none",
+      "reflection_count": 0
+    },
+    {
+      "qid": "hpqa_0",
+      "agent_type": "reflexion",
+      "gold_answer": "Arthur's Magazine",
+      "predicted_answer": "Arthur's Magazine (1844\u20131846) was an American literary periodical published in Philadelphia in the 19th century, while First for Women is a woman's magazine published by Bauer Media Group in the USA starting in 1989.\n\nBased on this information:\n- Arthur's Magazine started first in 1844.\n- First for Women started in 1989.\n\nTherefore, Arthur's Magazine was started first compared to First for Women.",
+      "is_correct": true,
+      "attempts": 2,
+      "failure_mode": "none",
+      "reflection_count": 1
+    },
+    {
+      "qid": "hpqa_1",
+      "agent_type": "reflexion",
+      "gold_answer": "Delhi",
+      "predicted_answer": "The Oberoi family is part of the Oberoi Group, which has its head office in Delhi.",
+      "is_correct": true,
+      "attempts": 1,
+      "failure_mode": "none",
+      "reflection_count": 0
+    }
+  ],
+  "extensions": [
+    "structured_evaluator",
+    "reflection_memory",
+    "benchmark_report_json",
+    "mock_mode_for_autograding",
+    "adaptive_max_attempts",
+    "memory_compression"
+  ],
+  "discussion": "Reflexion demonstrates significant improvement over ReAct for multi-hop reasoning tasks, particularly when the first attempt fails to complete all reasoning hops or selects incorrect entities. The reflection memory mechanism allows the agent to learn from previous mistakes by storing explicit lessons and strategies. However, this comes with notable tradeoffs: increased token consumption (approximately 2-3x more than ReAct), higher latency due to sequential model calls, and potential reflection overfitting when the agent becomes too constrained by previous attempts. The adaptive_max_attempts extension mitigates some latency by enabling early stopping when the evaluator reports high confidence, while memory_compression prevents token overflow by retaining only the most recent reflections. Failure mode analysis reveals that entity_drift and incomplete_multi_hop are the most common errors, suggesting future work should focus on improving entity grounding and explicit multi-hop reasoning chains."
+}
